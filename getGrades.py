@@ -32,9 +32,29 @@ go("https://online.ksu.edu/Axio/UMS/CourseListing")
 KSOLMainSource = show()
 #class titles appear to be in dd tag. regex:
 CLASSES = re.findall("<dd>(.*?)</dd>",KSOLMainSource,re.S)
-CLASSLINKS = re.findall("<dt> <a href=\"(.*?)\".*</dt>", KSOLMainSource, re.S)
+CLASSLINKS = re.findall("<dt><a href=\"(.*?)\".*?</dt>", KSOLMainSource, re.S)
 
+#links format: https://online.ksu.edu/SymMetrics/jsp/StudentAssignment/index.jsp?courseName=chm_210_lab
+#assignments and grade page URL example: 
+#https://online.ksu.edu/SymMetrics/jsp/StudentAssignment/index.jsp?courseName=chm_210_lab
+#so split link by '=' and insert onto grading url
+ListOfClasses = []
+ListOfGrades = []
+
+print "Detected the following classes:"
 for match in CLASSES :
-	print match + "\n"
+	print match
+	ListOfClasses.append(match)
+print "grades attached to classes:"
 for link in CLASSLINKS :
-	print link + "\n"
+	b.go("https://online.ksu.edu/SymMetrics/jsp/StudentAssignment/index.jsp?courseName="+link.split("=")[1])
+	gradeTemp = re.findall("- [0-9\.]+%",show(), re.S)
+	if(gradeTemp == None or gradeTemp == []):
+		ListOfGrades.append("N/A")
+	else:
+		grade = str(gradeTemp[-1])
+		ListOfGrades.append(grade)
+	print link
+
+for x in range(0,len(ListOfGrades)):
+	print ListOfClasses[x] + " \t\t----- " + ListOfGrades[x]
