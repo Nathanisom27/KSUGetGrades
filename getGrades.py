@@ -1,6 +1,7 @@
 import sys
 import re
 import getpass
+import csv
 
 #set up twill, declare browser for capturing output, then import commands to match the 'b'.
 from twill import get_browser
@@ -55,6 +56,7 @@ for link in CLASSLINKS :
 		grade = str(gradeTemp[-1])
 		ListOfGrades.append(grade)
 	print link
+
 
 for x in range(0,len(ListOfGrades)):
 	print ListOfClasses[x] + " \t\t----- " + ListOfGrades[x]
