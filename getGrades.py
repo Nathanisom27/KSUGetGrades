@@ -2,6 +2,8 @@ import sys
 import re
 import getpass
 import csv
+import os
+
 
 #set up twill, declare browser for capturing output, then import commands to match the 'b'.
 from twill import get_browser
@@ -21,6 +23,10 @@ else:
 	USERNAME = raw_input("KSU Username:")
 	PASSWORD = getpass.getpass()
 
+print "connecting to KSOL.."
+
+#os.environ['PYTHONUNBUFFERED']='x'
+PYTHONUNBUFFERED=1
 
 b.go ("https://connect.ksu.edu")
 formvalue("loginForm","username",USERNAME)
@@ -46,10 +52,12 @@ print "Detected the following classes:"
 for match in CLASSES :
 	print match
 	ListOfClasses.append(match)
-print "grades attached to classes:"
+
+
+print "grabbing grades..."
 for link in CLASSLINKS :
 	b.go("https://online.ksu.edu/SymMetrics/jsp/StudentAssignment/index.jsp?courseName="+link.split("=")[1])
-	gradeTemp = re.findall("- [0-9\.]+%",show(), re.S)
+	gradeTemp = re.findall("[0-9\.]+%",show(), re.S)
 	if(gradeTemp == None or gradeTemp == []):
 		ListOfGrades.append("N/A")
 	else:
@@ -57,6 +65,11 @@ for link in CLASSLINKS :
 		ListOfGrades.append(grade)
 	print link
 
+print "writing CSV..."
 
-for x in range(0,len(ListOfGrades)):
-	print ListOfClasses[x] + " \t\t----- " + ListOfGrades[x]
+with open ('Grades.csv','wb') as csvfile:
+	writer = csv.writer(csvfile)
+	for x in range(0,len(ListOfGrades)):
+		writer.writerow([ListOfClasses[x],ListOfGrades[x]])
+
+print "finished!"
