@@ -1,4 +1,4 @@
 KSUGetGrades
 ============
 
-retrieve your grades from KSOL. will output to CSV when complete. 
+A now outdated script to scrape your grades from KSOL using the twily python library, and dump them to a CSV file.
